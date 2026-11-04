@@ -1,30 +1,87 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:asistencia_infantil/data/datos_demo.dart';
+import 'package:asistencia_infantil/data/repositorio_en_memoria.dart';
+import 'package:asistencia_infantil/domain/dominio.dart';
+import 'package:asistencia_infantil/ui/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:asistencia_infantil/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('los datos de demostración son coherentes', () {
+    final hoy = DateTime(2026, 11, 1, 10);
+    final datos = DatosDemo.generar(hoy);
+    final presentesSegunRegistros = calcularPresentes(
+      datos.registros.where((r) => soloDia(r.fecha) == soloDia(hoy)),
+    ).map((r) => r.idNino).toSet();
+    final presentesSegunNinos = datos.ninos.where((n) => n.presente).map((n) => n.id).toSet();
+    expect(presentesSegunNinos, presentesSegunRegistros);
+    expect(datos.ninos.every((n) => n.grupo(hoy: hoy) != null), isTrue);
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('la app abre y navega entre secciones', (tester) async {
+    final datos = DatosDemo.generar(DateTime.now());
+    final repo = RepositorioEnMemoria(ninos: datos.ninos, registros: datos.registros);
+    await tester.binding.setSurfaceSize(const Size(1200, 900));
+    await tester.pumpWidget(AsistenciaApp(repositorio: repo));
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Ingreso y salida'), findsWidgets);
+    await tester.enterText(find.byType(TextField), 'valentina');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Valentina'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('Presentes').last);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('niños presentes'), findsOneWidget);
+
+    await tester.tap(find.text('Dashboard').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Entradas hoy'), findsOneWidget);
+
+    await tester.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('avisa si la manilla ya está en uso', (tester) async {
+    final hoy = DateTime.now();
+    final presente = nino('a', presente: true);
+    final libre = nino('b');
+    final repo = RepositorioEnMemoria(ninos: [presente, libre], registros: [
+      Registro(
+        id: 'r1',
+        idNino: 'a',
+        nombreNino: presente.nombreCompleto,
+        tipo: TipoMovimiento.entrada,
+        fecha: hoy,
+        numeroManilla: '7',
+        idVoluntario: 'v',
+        nombreVoluntario: 'V',
+        nombreAcudiente: 'A',
+        servicio: 'Miércoles',
+      ),
+    ]);
+    await tester.pumpWidget(AsistenciaApp(repositorio: repo));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Entrada').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextField, 'Número de manilla'), '7');
+    await tester.tap(find.text('Registrar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('La manilla 7 ya está en uso hoy.'), findsOneWidget);
   });
 }
+
+Nino nino(String id, {bool presente = false}) => Nino(
+      id: id,
+      tipoIdentificacion: 'Registro Civil',
+      identificacionMenor: '',
+      nombres: 'Niño $id',
+      apellidos: 'Prueba',
+      fechaNacimiento: DateTime(DateTime.now().year - 5, 1, 1),
+      genero: 'Masculino',
+      estadoRegistro: 'Activo',
+      alertaMedica: false,
+      condicionMedica: '',
+      autorizoFoto: true,
+      presente: presente,
+    );
