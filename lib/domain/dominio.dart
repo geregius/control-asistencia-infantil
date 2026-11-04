@@ -3,6 +3,7 @@
 library;
 
 export 'acudiente.dart';
+export 'estadisticas.dart';
 export 'fechas.dart';
 export 'nino.dart';
 export 'registro.dart';
