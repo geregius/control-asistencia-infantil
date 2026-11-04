@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print -- herramienta de consola: imprime la tabla de resultados.
 // Mide las funciones del dominio con volúmenes crecientes.
 //
 //   dart run tool/benchmark.dart

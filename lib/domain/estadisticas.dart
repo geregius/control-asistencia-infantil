@@ -1,4 +1,3 @@
-import 'fechas.dart';
 import 'nino.dart';
 import 'registro.dart';
 
@@ -81,18 +80,25 @@ double? promedio(Iterable<num> valores) {
 /// Divide por las OCASIONES en que hubo cada jornada (días distintos), no
 /// por el número de semanas: así responde "cuántos niños llegan a un
 /// miércoles típico".
+///
+/// Una sola pasada sobre los registros, agrupando por jornada y día. El
+/// día se identifica con un entero (AAAAMMDD) y no con `soloDia()`: crear
+/// un `DateTime` local por registro consulta la zona horaria y hacía esta
+/// función ~170 veces más lenta (ver docs/RENDIMIENTO.md).
 Map<String, double?> promedioPorJornada(Iterable<Registro> registros) {
-  final entradas = registros.where((r) => r.esEntrada);
+  final entradasPorJornadaYDia = registros.where((r) => r.esEntrada).fold(
+    <String, Map<int, int>>{},
+    (acumulado, r) => acumulado
+      ..putIfAbsent(r.servicio, () => {})
+          .update(_claveDia(r.fecha), (n) => n + 1, ifAbsent: () => 1),
+  );
   return {
     for (final servicio in serviciosDisponibles)
-      servicio: promedio(
-        contarPor(
-          entradas.where((r) => r.servicio == servicio),
-          (r) => soloDia(r.fecha),
-        ).values,
-      ),
+      servicio: promedio(entradasPorJornadaYDia[servicio]?.values ?? const <int>[]),
   };
 }
+
+int _claveDia(DateTime fecha) => fecha.year * 10000 + fecha.month * 100 + fecha.day;
 
 /// La jornada con más entradas (con [reduce]), o `null` si no hay datos.
 MapEntry<String, int>? jornadaConMasAsistencia(Map<String, int> porServicio) {
