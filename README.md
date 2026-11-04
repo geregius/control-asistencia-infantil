@@ -2,6 +2,8 @@
 
 App en **Flutter** para controlar la entrada y salida de niños en programas infantiles: búsqueda rápida en la puerta, manillas, alertas médicas, lista de presentes en tiempo real, Dashboard y cumpleaños.
 
+**[Abrir la demo en el navegador](https://geregius.github.io/control-asistencia-infantil/)** (datos ficticios, se reinician al recargar).
+
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart)
