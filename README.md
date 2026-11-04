@@ -2,12 +2,12 @@
 
 App en **Flutter** para controlar la entrada y salida de niños en programas infantiles: búsqueda rápida en la puerta, manillas, alertas médicas, lista de presentes en tiempo real, Dashboard y cumpleaños.
 
-**[Abrir la demo en el navegador](https://geregius.github.io/control-asistencia-infantil/)** (datos ficticios, se reinician al recargar).
+**[Abrir la demo en el navegador](https://geregius.github.io/control-asistencia-infantil/)** (datos ficticios; lo que registres se guarda en tu navegador y el botón ⟳ los reinicia).
 
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart)
-![Pruebas](https://img.shields.io/badge/pruebas-42-brightgreen)
+![Pruebas](https://img.shields.io/badge/pruebas-48-brightgreen)
 
 > **Repositorio de muestra.** La app completa está en producción (Flutter + Firebase, más de 60 archivos y unas 23.000 líneas de Dart, desde agosto de 2026) y su código es privado porque maneja datos de menores. Aquí se publica una parte representativa: el dominio, la capa de datos y una app de demostración que corre con **datos 100 % ficticios**. Ningún nombre corresponde a una persona real.
 
@@ -25,6 +25,7 @@ App en **Flutter** para controlar la entrada y salida de niños en programas inf
 - **Presentes en tiempo real**, agrupados por grupo de edad. Es el mismo cálculo que usa el modo emergencia de la app completa.
 - **Dashboard:** entradas del día, presentes, los que ya salieron, distribución por grupo, promedio por jornada y niños que dejaron de asistir.
 - **Cumpleaños de la semana.**
+- **Los datos sobreviven a una recarga:** se guardan en el navegador. Un día nuevo empieza limpio, como el cierre automático de jornada de la app real, y el botón ⟳ vuelve a los datos de demostración.
 
 ## Probarlo
 
@@ -35,7 +36,7 @@ git clone <url-de-este-repositorio>
 cd control-asistencia-infantil
 flutter pub get
 flutter run -d chrome     # abre la demo en el navegador
-flutter test              # 42 pruebas
+flutter test              # 48 pruebas
 flutter analyze           # análisis estático
 ```
 
@@ -54,7 +55,9 @@ lib/
 │   └── fechas.dart        Conversión de fechas sin depender de Firebase
 ├── data/              Acceso a datos
 │   ├── repositorio_asistencia.dart   Contrato (clase abstracta)
-│   ├── repositorio_en_memoria.dart   Implementación para demo y pruebas
+│   ├── repositorio_en_memoria.dart   Implementación con las reglas, para demo y pruebas
+│   ├── repositorio_persistente.dart  Decorador que guarda los datos en el navegador
+│   ├── almacen_local.dart            Dónde se guarda (navegador o memoria)
 │   └── datos_demo.dart               Datos ficticios
 ├── ui/                Pantallas, tema y componentes
 └── main.dart
