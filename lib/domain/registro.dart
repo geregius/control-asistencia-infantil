@@ -1,3 +1,11 @@
+// =============================================================================
+// registro.dart — Cada entrada o salida de un niño, y quién está presente.
+//
+// Contiene: las jornadas, el tipo de movimiento (enum), la jornada sugerida
+// según la hora, la clase Registro y calcularPresentes(), la regla más
+// importante de la app.
+// =============================================================================
+
 import 'fechas.dart';
 
 /// Jornadas en las que se registra asistencia.
@@ -9,10 +17,12 @@ const serviciosDisponibles = [
   'Sábado',
 ];
 
+/// Si el movimiento es una entrada o una salida.
 enum TipoMovimiento {
   entrada,
   salida;
 
+  /// Del texto guardado al enum (lo que no sea "Salida" es entrada).
   static TipoMovimiento fromString(String? valor) =>
       valor == 'Salida' ? salida : entrada;
 
@@ -22,7 +32,11 @@ enum TipoMovimiento {
 /// La jornada que corresponde AHORA según el día y la hora, para
 /// preseleccionarla en el formulario. `null` si hoy no hay jornada.
 String? servicioSugerido([DateTime? ahora]) {
+  // Los corchetes en el parámetro lo hacen opcional y posicional.
   final hoy = ahora ?? DateTime.now();
+
+  // "Switch expression" de Dart 3: cada caso devuelve un valor directamente.
+  // `_` es el caso por defecto (lunes, martes y jueves no hay jornada).
   return switch (hoy.weekday) {
     DateTime.wednesday => 'Miércoles',
     DateTime.friday => 'Viernes',
@@ -51,6 +65,9 @@ class Registro {
   final String nombreVoluntario;
   final String nombreAcudiente;
   final String servicio;
+
+  /// El grupo que tenía el niño en ESE momento (foto del día). El grupo del
+  /// niño en sí nunca se guarda, pero el del registro sí: es historia.
   final String grupoEdad;
   final bool esEmergencia;
   final String observacion;
@@ -71,13 +88,16 @@ class Registro {
     this.observacion = '',
   });
 
+  /// Un registro sin niño inscrito es de un visitante.
   bool get esVisitante => idNino.isEmpty;
   bool get esEntrada => tipo == TipoMovimiento.entrada;
 
   /// Con qué se identifica a la persona en el día: el niño inscrito por su
-  /// id, el visitante por su manilla.
+  /// id, el visitante por su manilla. El prefijo evita que un id y un número
+  /// de manilla iguales se confundan.
   String get claveDelDia => esVisitante ? 'manilla:$numeroManilla' : 'nino:$idNino';
 
+  /// Convierte el registro en un Map para guardarlo.
   Map<String, dynamic> toMap() => {
         'idNino': idNino,
         'nombreNino': nombreNino,
@@ -93,6 +113,7 @@ class Registro {
         'observacion': observacion,
       };
 
+  /// Crea un Registro a partir de lo guardado.
   factory Registro.fromMap(String id, Map<String, dynamic> data) => Registro(
         id: id,
         idNino: data['idNino'] as String? ?? '',
@@ -117,8 +138,16 @@ class Registro {
 /// las dos pantallas comparten exactamente el mismo criterio: el listado
 /// de una evacuación no puede quedar distinto del real.
 List<Registro> calcularPresentes(Iterable<Registro> registrosDelDia) {
+  // 1. Copia ordenada por fecha (de la más antigua a la más reciente). Se
+  //    ordena aquí para no depender del orden en que llegue la lista.
+  //    `..sort` (cascada) ordena la copia y la devuelve.
   final ordenados = [...registrosDelDia]..sort((a, b) => a.fecha.compareTo(b.fecha));
-  // Al recorrer en orden, el último que queda por cada clave es el más reciente.
+
+  // 2. Mapa persona → su último movimiento. Al recorrer en orden, cada
+  //    movimiento sobrescribe al anterior de la misma persona, así que al
+  //    final queda el más reciente.
   final ultimoPorPersona = {for (final r in ordenados) r.claveDelDia: r};
+
+  // 3. Se queda solo con los que terminan en Entrada (los que no han salido).
   return ultimoPorPersona.values.where((r) => r.esEntrada).toList();
 }
