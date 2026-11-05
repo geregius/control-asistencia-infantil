@@ -1,3 +1,12 @@
+// =============================================================================
+// repositorio_en_memoria_test.dart — Pruebas de las reglas de la puerta
+// (doble entrada, salida sin entrada, manilla repetida) y del Stream.
+//
+// `setUp` crea un repositorio nuevo antes de cada prueba y `tearDown` lo
+// cierra después, para que ninguna prueba dependa de otra. El reloj fijo
+// (`reloj: () => ahora`) hace que la hora sea siempre la misma.
+// =============================================================================
+
 import 'package:asistencia_infantil/data/repositorio_asistencia.dart';
 import 'package:asistencia_infantil/data/repositorio_en_memoria.dart';
 import 'package:asistencia_infantil/domain/dominio.dart';

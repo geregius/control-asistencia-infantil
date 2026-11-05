@@ -1,3 +1,9 @@
+// =============================================================================
+// estadisticas_test.dart — Pruebas de las funciones puras del Dashboard.
+// Como no dependen de pantalla ni base de datos, basta con armar una lista
+// pequeña de registros y comparar el resultado.
+// =============================================================================
+
 import 'package:asistencia_infantil/domain/dominio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

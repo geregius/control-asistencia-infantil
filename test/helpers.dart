@@ -1,3 +1,10 @@
+// =============================================================================
+// helpers.dart — Fábricas de datos de prueba.
+//
+// Crean un niño o un registro llenando solo lo que cada prueba necesita; el
+// resto toma valores por defecto. Así cada prueba se lee corta y clara.
+// =============================================================================
+
 import 'package:asistencia_infantil/domain/dominio.dart';
 
 /// Fábricas para armar datos de prueba con lo mínimo.

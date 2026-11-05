@@ -1,3 +1,11 @@
+// =============================================================================
+// widget_test.dart — Pruebas de la interfaz y de los datos de demostración.
+//
+// `testWidgets` dibuja la app en memoria (sin navegador). `tester.tap` toca
+// un botón, `enterText` escribe y `pumpAndSettle` espera a que terminen las
+// animaciones. `find.text(...)` busca un texto en pantalla.
+// =============================================================================
+
 import 'package:asistencia_infantil/data/datos_demo.dart';
 import 'package:asistencia_infantil/data/repositorio_en_memoria.dart';
 import 'package:asistencia_infantil/domain/dominio.dart';

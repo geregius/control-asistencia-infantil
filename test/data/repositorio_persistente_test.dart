@@ -1,3 +1,11 @@
+// =============================================================================
+// repositorio_persistente_test.dart — Pruebas del decorador que guarda:
+// sobrevive a reabrir, no repite ids, no guarda movimientos rechazados,
+// descarta lo de otro día, tolera datos dañados y se reinicia.
+//
+// Usa AlmacenEnMemoria en vez del navegador: el mismo contrato, sin plugins.
+// =============================================================================
+
 import 'dart:convert';
 
 import 'package:asistencia_infantil/data/almacen_local.dart';

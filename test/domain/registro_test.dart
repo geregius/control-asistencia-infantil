@@ -1,3 +1,9 @@
+// =============================================================================
+// registro_test.dart — Pruebas de la jornada sugerida, calcularPresentes
+// (incluido el caso de registros desordenados y visitantes por manilla) y
+// de leerFecha con un Timestamp falso.
+// =============================================================================
+
 import 'package:asistencia_infantil/domain/dominio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
