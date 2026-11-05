@@ -12,13 +12,31 @@ class RepositorioEnMemoria implements RepositorioAsistencia {
     DateTime Function()? reloj,
   })  : _ninos = {for (final n in ninos) n.id: n},
         _registros = [...registros],
-        _reloj = reloj ?? DateTime.now;
+        _reloj = reloj ?? DateTime.now,
+        // Sigue la numeración de los registros que ya trae, para no repetir ids.
+        _siguienteId = registros.length + 1;
 
   final Map<String, Nino> _ninos;
   final List<Registro> _registros;
   final DateTime Function() _reloj;
   final _cambios = StreamController<void>.broadcast();
-  var _siguienteId = 1;
+  int _siguienteId;
+
+  /// Copia de todos los datos, para guardarlos.
+  ({List<Nino> ninos, List<Registro> registros}) instantanea() =>
+      (ninos: _ninos.values.toList(), registros: [..._registros]);
+
+  /// Cambia todos los datos de una vez y avisa a quien esté escuchando.
+  void reemplazar({required List<Nino> ninos, required List<Registro> registros}) {
+    _ninos
+      ..clear()
+      ..addAll({for (final n in ninos) n.id: n});
+    _registros
+      ..clear()
+      ..addAll(registros);
+    _siguienteId = registros.length + 1;
+    _cambios.add(null);
+  }
 
   @override
   Stream<List<Nino>> ninos() => _observar(() {

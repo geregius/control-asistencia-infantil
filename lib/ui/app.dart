@@ -8,9 +8,13 @@ import 'pantalla_presentes.dart';
 import 'tema.dart';
 
 class AsistenciaApp extends StatelessWidget {
-  const AsistenciaApp({super.key, required this.repositorio});
+  const AsistenciaApp({super.key, required this.repositorio, this.alReiniciar});
 
   final RepositorioAsistencia repositorio;
+
+  /// Si se da, la barra superior muestra un botón para volver a los datos
+  /// de demostración del día.
+  final Future<void> Function()? alReiniciar;
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +22,16 @@ class AsistenciaApp extends StatelessWidget {
       title: 'Asistencia Infantil',
       debugShowCheckedModeBanner: false,
       theme: temaApp(),
-      home: _Inicio(repositorio: repositorio),
+      home: _Inicio(repositorio: repositorio, alReiniciar: alReiniciar),
     );
   }
 }
 
 class _Inicio extends StatefulWidget {
-  const _Inicio({required this.repositorio});
+  const _Inicio({required this.repositorio, this.alReiniciar});
 
   final RepositorioAsistencia repositorio;
+  final Future<void> Function()? alReiniciar;
 
   @override
   State<_Inicio> createState() => _InicioState();
@@ -54,11 +59,15 @@ class _InicioState extends State<_Inicio> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_secciones[_indice].titulo),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Center(child: Text('Datos de demostración', style: TextStyle(fontSize: 12))),
-          ),
+        actions: [
+          const Center(child: Text('Datos de demostración', style: TextStyle(fontSize: 12))),
+          if (widget.alReiniciar != null)
+            IconButton(
+              tooltip: 'Reiniciar demo',
+              icon: const Icon(Icons.restart_alt),
+              onPressed: _confirmarReinicio,
+            ),
+          const SizedBox(width: 8),
         ],
       ),
       body: IndexedStack(index: _indice, children: pantallas),
@@ -70,5 +79,23 @@ class _InicioState extends State<_Inicio> {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmarReinicio() async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('¿Reiniciar la demo?'),
+        content: const Text('Se borran los movimientos que registraste y vuelven los datos ficticios del día.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Reiniciar')),
+        ],
+      ),
+    );
+    if (confirmado != true || !mounted) return;
+    final mensajero = ScaffoldMessenger.of(context);
+    await widget.alReiniciar!();
+    mensajero.showSnackBar(const SnackBar(content: Text('Demo reiniciada.')));
   }
 }

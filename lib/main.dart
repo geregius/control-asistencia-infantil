@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'data/datos_demo.dart';
-import 'data/repositorio_en_memoria.dart';
+import 'data/almacen_local.dart';
+import 'data/repositorio_persistente.dart';
 import 'ui/app.dart';
 
-/// Punto de entrada de la demo: la app corre con datos ficticios en
-/// memoria. La versión en producción inyecta aquí un repositorio sobre
-/// Firestore; el resto del código es el mismo.
-void main() {
-  final datos = DatosDemo.generar(DateTime.now());
-  runApp(AsistenciaApp(
-    repositorio: RepositorioEnMemoria(ninos: datos.ninos, registros: datos.registros),
-  ));
+/// Punto de entrada de la demo: datos ficticios que se guardan en el
+/// navegador, así que sobreviven a una recarga. La versión en producción
+/// inyecta aquí un repositorio sobre Firestore; el resto del código es el
+/// mismo.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final repositorio = await RepositorioPersistente.abrir(
+    almacen: AlmacenPreferencias(SharedPreferencesAsync()),
+  );
+  runApp(AsistenciaApp(repositorio: repositorio, alReiniciar: repositorio.reiniciar));
 }

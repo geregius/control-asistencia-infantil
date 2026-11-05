@@ -37,7 +37,16 @@ abstract class RepositorioAsistencia {
 
 // lib/data/repositorio_en_memoria.dart
 class RepositorioEnMemoria implements RepositorioAsistencia { ... }
+
+// lib/data/repositorio_persistente.dart
+class RepositorioPersistente implements RepositorioAsistencia {
+  final RepositorioEnMemoria _base;   // le delega las reglas
+  final AlmacenLocal _almacen;        // dónde guardar
+  ...
+}
 ```
+
+**Composición y patrón Decorador.** `RepositorioPersistente` no hereda de `RepositorioEnMemoria`: lo *contiene* y le delega cada llamada, y solo agrega guardar en el navegador. `main.dart` usa el persistente; las pruebas, el de memoria; ninguna pantalla cambió. Lo mismo pasa con `AlmacenLocal`: la app guarda con `AlmacenPreferencias` (localStorage) y las pruebas con `AlmacenEnMemoria`.
 
 **Herencia.** Cada pantalla hereda de `StatelessWidget` o `StatefulWidget` y sobrescribe `build()`. `RegistroRechazado` implementa `Exception`.
 
