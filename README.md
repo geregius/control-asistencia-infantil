@@ -67,6 +67,7 @@ docs/                  Arquitectura, paradigmas, justificación y capturas
 - [Arquitectura](docs/ARQUITECTURA.md): capas, diagramas y flujo de un ingreso.
 - [Paradigmas](docs/PARADIGMAS.md): POO, funcional (`map`, `where`, `fold`, `reduce`) y procedimental, con ejemplos del código.
 - [Justificación tecnológica](docs/JUSTIFICACION.md): Flutter frente a Kotlin, React Native y web; Firebase frente a Supabase y servidor propio; trade-offs.
+- [Rendimiento](docs/RENDIMIENTO.md): mediciones del dominio, una optimización de 170× y el tamaño de la app web.
 
 ## Tecnologías
 

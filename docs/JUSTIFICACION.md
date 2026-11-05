@@ -20,7 +20,9 @@ Además, el liderazgo necesita reportes y, en una evacuación, la lista exacta d
 | Tipado y seguridad ante nulos | **Fuerte, null-safety obligatorio** | Fuerte | TypeScript opcional | TypeScript opcional |
 | Curva para un equipo de una persona | Media | Alta si hay que hacer también iOS | Media | Baja |
 
-**Decisión: Flutter.** Un solo código llega a los celulares de todos los voluntarios sin pasar por las tiendas. Los acudientes entran escaneando un QR. El null-safety de Dart evita una clase entera de errores (un niño sin fecha, un acudiente sin correo) que en esta app no son raros: hay datos migrados de un sistema anterior.
+**Decisión: Flutter.** (Las cifras medidas de rendimiento y tamaño están en [RENDIMIENTO.md](RENDIMIENTO.md).)
+
+**Por qué Flutter:** Un solo código llega a los celulares de todos los voluntarios sin pasar por las tiendas. Los acudientes entran escaneando un QR. El null-safety de Dart evita una clase entera de errores (un niño sin fecha, un acudiente sin correo) que en esta app no son raros: hay datos migrados de un sistema anterior.
 
 **Lo que se cede (trade-offs):**
 - La web de Flutter pesa más al primer ingreso que una web hecha en React (se descarga el motor). Se mitiga con caché.
