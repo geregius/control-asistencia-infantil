@@ -1,3 +1,7 @@
+// =============================================================================
+// pantalla_cumpleanos.dart — Niños que cumplieron años en la última semana.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../data/repositorio_asistencia.dart';
@@ -16,6 +20,7 @@ class PantallaCumpleanos extends StatelessWidget {
     return StreamBuilder<List<Nino>>(
       stream: repositorio.ninos(),
       builder: (context, snapshot) {
+        // La lógica está en el dominio; aquí solo se pinta el resultado.
         final cumpleaneros = cumpleanerosDeLaSemana(snapshot.data ?? []);
         return AnchoLimitado(
           child: ListView(
@@ -25,6 +30,8 @@ class PantallaCumpleanos extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
               const SizedBox(height: 12),
               if (cumpleaneros.isEmpty) const Text('Nadie cumplió años esta semana.'),
+              // Desestructura cada record: `(:nino, :diasDesde)` crea dos
+              // variables con los campos del mismo nombre.
               for (final (:nino, :diasDesde) in cumpleaneros)
                 Card(
                   margin: const EdgeInsets.only(bottom: 8),
@@ -32,6 +39,7 @@ class PantallaCumpleanos extends StatelessWidget {
                     leading: AvatarNino(nino: nino),
                     title: Text(nino.nombreCompleto),
                     subtitle: Text('Cumplió ${nino.edad()} años · ${nino.grupo() ?? ''}'),
+                    // "¡Hoy!", "Hace 1 día" o "Hace N días".
                     trailing: Etiqueta(
                       diasDesde == 0 ? '¡Hoy!' : 'Hace $diasDesde ${diasDesde == 1 ? 'día' : 'días'}',
                       color: diasDesde == 0 ? Colores.acento : Colores.primario,
