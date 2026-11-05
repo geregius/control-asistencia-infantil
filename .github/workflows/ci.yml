@@ -42,6 +42,11 @@ jobs:
     if: github.event_name == 'push'
     needs: analizar-y-probar
     runs-on: ubuntu-latest
+    # Un despliegue a la vez: si llegan dos push seguidos a main, el
+    # segundo espera al primero en vez de fallar.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write
