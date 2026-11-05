@@ -1,3 +1,10 @@
+// =============================================================================
+// pantalla_dashboard.dart — Resumen del día, promedios y niños ausentes.
+//
+// Esta pantalla no calcula nada: llama a las funciones puras de
+// domain/estadisticas.dart y solo dibuja lo que devuelven.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../data/repositorio_asistencia.dart';
@@ -20,25 +27,32 @@ class PantallaDashboard extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
+          // Bloque 1: tarjetas y gráfica del día. Escucha los movimientos de hoy.
           StreamBuilder<List<Registro>>(
             stream: repositorio.registrosDelDia(hoy),
             builder: (context, snapshot) => _ResumenHoy(resumen: resumenDelDia(snapshot.data ?? [])),
           ),
           const SizedBox(height: 16),
+
+          // Bloque 2: promedio por jornada de las últimas 8 semanas (56 días).
           StreamBuilder<List<Registro>>(
             stream: repositorio.registrosDesde(hoy.subtract(const Duration(days: 56))),
             builder: (context, snapshot) {
+              // Quita las jornadas sin datos (promedio null).
               final promedios = promedioPorJornada(snapshot.data ?? [])
                 ..removeWhere((_, valor) => valor == null);
               return _Seccion(
                 titulo: 'Promedio de niños por jornada (últimas 8 semanas)',
                 child: promedios.isEmpty
                     ? const Text('Sin datos todavía.')
+                    // map convierte cada valor double? en double (ya sin nulos).
                     : BarrasHorizontales(datos: promedios.map((k, v) => MapEntry(k, v!))),
               );
             },
           ),
           const SizedBox(height: 16),
+
+          // Bloque 3: niños que dejaron de venir, para hacerles seguimiento.
           StreamBuilder<List<Nino>>(
             stream: repositorio.ninos(),
             builder: (context, snapshot) {
@@ -67,6 +81,7 @@ class PantallaDashboard extends StatelessWidget {
   }
 }
 
+/// Las cuatro tarjetas del día, la gráfica por grupo y la jornada más concurrida.
 class _ResumenHoy extends StatelessWidget {
   const _ResumenHoy({required this.resumen});
 
@@ -81,6 +96,9 @@ class _ResumenHoy extends StatelessWidget {
       TarjetaDato(valor: '${resumen.visitantes}', titulo: 'Visitantes', icono: Icons.person_add_alt, color: Colors.indigo),
     ];
     final masConcurrida = jornadaConMasAsistencia(resumen.porServicio);
+
+    // LayoutBuilder entrega el ancho disponible: 4 tarjetas por fila en
+    // pantallas anchas y 2 en el celular.
     return LayoutBuilder(
       builder: (context, restricciones) {
         final columnas = restricciones.maxWidth > 700 ? 4 : 2;
@@ -92,6 +110,7 @@ class _ResumenHoy extends StatelessWidget {
             for (var i = 0; i < tarjetas.length; i += columnas)
               Row(
                 children: [
+                  // skip + take: las tarjetas de esta fila.
                   for (final tarjeta in tarjetas.skip(i).take(columnas)) Expanded(child: tarjeta),
                 ],
               ),
@@ -113,6 +132,7 @@ class _ResumenHoy extends StatelessWidget {
   }
 }
 
+/// Tarjeta con título que envuelve cada bloque del Dashboard.
 class _Seccion extends StatelessWidget {
   const _Seccion({required this.titulo, required this.child});
 

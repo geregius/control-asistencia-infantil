@@ -1,3 +1,8 @@
+// =============================================================================
+// rol_usuario_test.dart — Pruebas de los roles: conversión desde texto,
+// roles asignables y que cada permiso sea independiente de los demás.
+// =============================================================================
+
 import 'package:asistencia_infantil/domain/dominio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

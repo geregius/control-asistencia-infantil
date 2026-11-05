@@ -1,3 +1,7 @@
+// =============================================================================
+// app.dart — La app: tema, barra superior y navegación entre las 4 pantallas.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../data/repositorio_asistencia.dart';
@@ -7,6 +11,8 @@ import 'pantalla_ingreso.dart';
 import 'pantalla_presentes.dart';
 import 'tema.dart';
 
+/// El widget raíz. Recibe el repositorio desde main.dart (inyección de
+/// dependencias): la app no sabe ni le importa de dónde vienen los datos.
 class AsistenciaApp extends StatelessWidget {
   const AsistenciaApp({super.key, required this.repositorio, this.alReiniciar});
 
@@ -18,6 +24,7 @@ class AsistenciaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MaterialApp configura el tema, el título y la pantalla inicial.
     return MaterialApp(
       title: 'Asistencia Infantil',
       debugShowCheckedModeBanner: false,
@@ -27,6 +34,8 @@ class AsistenciaApp extends StatelessWidget {
   }
 }
 
+/// Estructura común: barra superior, contenido y barra de navegación inferior.
+/// Es StatefulWidget porque recuerda qué pestaña está abierta.
 class _Inicio extends StatefulWidget {
   const _Inicio({required this.repositorio, this.alReiniciar});
 
@@ -38,8 +47,10 @@ class _Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<_Inicio> {
+  /// Pestaña abierta (0 = Ingreso, 1 = Presentes, 2 = Dashboard, 3 = Cumpleaños).
   var _indice = 0;
 
+  /// Título e ícono de cada pestaña, como una lista de records.
   static const _secciones = [
     (titulo: 'Ingreso y salida', icono: Icons.how_to_reg),
     (titulo: 'Presentes', icono: Icons.groups),
@@ -50,6 +61,7 @@ class _InicioState extends State<_Inicio> {
   @override
   Widget build(BuildContext context) {
     final repo = widget.repositorio;
+    // Las cuatro pantallas reciben el mismo repositorio.
     final pantallas = [
       PantallaIngreso(repositorio: repo),
       PantallaPresentes(repositorio: repo),
@@ -61,6 +73,7 @@ class _InicioState extends State<_Inicio> {
         title: Text(_secciones[_indice].titulo),
         actions: [
           const Center(child: Text('Datos de demostración', style: TextStyle(fontSize: 12))),
+          // El botón ⟳ aparece solo si main.dart dio la función de reinicio.
           if (widget.alReiniciar != null)
             IconButton(
               tooltip: 'Reiniciar demo',
@@ -70,6 +83,9 @@ class _InicioState extends State<_Inicio> {
           const SizedBox(width: 8),
         ],
       ),
+      // IndexedStack muestra una pantalla a la vez pero mantiene vivas las
+      // demás: al volver a una pestaña conserva lo que tenía (por ejemplo, el
+      // texto del buscador).
       body: IndexedStack(index: _indice, children: pantallas),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _indice,
@@ -81,6 +97,7 @@ class _InicioState extends State<_Inicio> {
     );
   }
 
+  /// Pide confirmación y, si el usuario acepta, reinicia la demo.
   Future<void> _confirmarReinicio() async {
     final confirmado = await showDialog<bool>(
       context: context,

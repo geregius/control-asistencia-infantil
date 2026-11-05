@@ -1,3 +1,12 @@
+// =============================================================================
+// nino_test.dart — Pruebas de edad, grupo, cumpleaños, llave interna,
+// búsqueda sin tildes y conversión de Nino desde y hacia Map.
+//
+// Cómo leer una prueba: `group` agrupa pruebas de un mismo tema; `test`
+// es una prueba con nombre; `expect(valor, esperado)` falla si no coinciden.
+// Se pasan fechas fijas (`hoy:`) para que el resultado no cambie con el tiempo.
+// =============================================================================
+
 import 'package:asistencia_infantil/domain/dominio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
