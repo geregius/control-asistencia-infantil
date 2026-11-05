@@ -20,6 +20,9 @@ abstract class RepositorioAsistencia {
 
   Stream<List<Registro>> registrosDelDia(DateTime dia);
 
+  /// Movimientos desde [desde] hasta hoy, para los promedios del Dashboard.
+  Stream<List<Registro>> registrosDesde(DateTime desde);
+
   /// Registra una entrada o salida aplicando las reglas del negocio.
   Future<Registro> registrarMovimiento({
     required Nino nino,

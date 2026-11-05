@@ -34,6 +34,12 @@ class RepositorioEnMemoria implements RepositorioAsistencia {
       );
 
   @override
+  Stream<List<Registro>> registrosDesde(DateTime desde) => _observar(
+        () => _registros.where((r) => !r.fecha.isBefore(desde)).toList()
+          ..sort((a, b) => a.fecha.compareTo(b.fecha)),
+      );
+
+  @override
   Future<Registro> registrarMovimiento({
     required Nino nino,
     required TipoMovimiento tipo,
