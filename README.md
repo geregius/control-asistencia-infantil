@@ -32,7 +32,7 @@ App en **Flutter** para controlar la entrada y salida de niños en programas inf
 Requisitos: [Flutter](https://docs.flutter.dev/get-started/install) 3.44 o superior.
 
 ```bash
-git clone <url-de-este-repositorio>
+git clone https://github.com/geregius/control-asistencia-infantil.git
 cd control-asistencia-infantil
 flutter pub get
 flutter run -d chrome     # abre la demo en el navegador
@@ -62,8 +62,12 @@ lib/
 ├── ui/                Pantallas, tema y componentes
 └── main.dart
 test/                  Pruebas de dominio, datos y widgets
-docs/                  Arquitectura, paradigmas, justificación y capturas
+tool/benchmark.dart    Medición de rendimiento del dominio
+docs/                  Arquitectura, paradigmas, justificación, rendimiento y capturas
+.github/workflows/     Integración continua y publicación de la demo
 ```
+
+Todo el código está comentado: cada archivo empieza con un encabezado que explica para qué sirve, y cada bloque explica qué hace y por qué.
 
 ## Documentación
 
@@ -81,6 +85,14 @@ docs/                  Arquitectura, paradigmas, justificación y capturas
 | App en producción | Firebase: Auth, Firestore, Storage, Cloud Functions, Hosting, Cloud Messaging |
 | Calidad | `flutter_lints`, pruebas unitarias y de widgets, GitHub Actions |
 
+## Flujo de trabajo
+
+- Cada cambio se hace en una rama propia (`feat/…`, `fix/…`, `docs/…`, `ci/…`) y entra a `main` por pull request.
+- El CI corre `flutter analyze`, `flutter test` y la compilación web en cada pull request; solo se fusiona con todo en verde.
+- Al llegar a `main`, el CI publica la demo en GitHub Pages.
+
 ## Autor
 
-Rafael Balaguera. El código de la app es de su autoría, y la app se donó para el uso de un programa infantil.
+**Rafael Balaguera** — diseño, desarrollo y decisiones técnicas. La app completa es de su autoría y se donó para el uso de un programa infantil.
+
+El desarrollo se apoyó en [Claude Code](https://claude.com/claude-code) (Anthropic) como asistente de programación.
